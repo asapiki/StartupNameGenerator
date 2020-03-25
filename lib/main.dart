@@ -2,29 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
+import 'package:startup_namer/models/user_model.dart';
 import 'package:startup_namer/pages/random_words_page.dart';
 
 void main() {
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  runApp(MyApp(googleSignIn: _googleSignIn, auth: _auth));
+  runApp(MyApp());
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key key, this.googleSignIn, this.auth}) : super(key: key);
-  final GoogleSignIn googleSignIn;
-  final FirebaseAuth auth;
-
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  FirebaseUser user;
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -35,40 +22,30 @@ class _MyAppState extends State<MyApp> {
           headline1: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
         ),
       ),
-      home: user == null ? buildLoginPage() : RandomWordsPage(),
-    );
-  }
-
-  Scaffold buildLoginPage() {
-    return Scaffold(
-      body: Center(
-        child: RaisedButton(
-          child: Text('login'),
-          onPressed: () {
-            _handleSignIn().then((FirebaseUser user) {
-              setState(() {
-                this.user = user;
-              });
-            }).catchError((e) => print(e));
+      home: ListenableProvider<UserModel>(
+        create: (_) => UserModel(),
+        child: Consumer<UserModel>(
+          builder: (context, value, child) {
+            return value.isLoggedIn ? RandomWordsPage() : buildLoginPage(value);
           },
         ),
       ),
     );
   }
 
-  Future<FirebaseUser> _handleSignIn() async {
-    final GoogleSignInAccount googleUser = await widget.googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
+  Scaffold buildLoginPage(UserModel user) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Startup Name Generator'),
+      ),
+      body: Center(
+        child: RaisedButton(
+          child: Text('login'),
+          onPressed: () {
+            user.login();
+          },
+        ),
+      ),
     );
-
-    final FirebaseUser user =
-        (await widget.auth.signInWithCredential(credential)).user;
-    print("signed in " + user.displayName);
-    return user;
   }
 }
