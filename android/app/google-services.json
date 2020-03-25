@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "337051335431",
+    "firebase_url": "https://startup-namer-f0c73.firebaseio.com",
+    "project_id": "startup-namer-f0c73",
+    "storage_bucket": "startup-namer-f0c73.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:337051335431:android:c21ed326d8b1f6b07023a2",
+        "android_client_info": {
+          "package_name": "works.asapiki.startup_namer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "337051335431-ores1kp48fqrijannk2gh0v2if7jeibv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "works.asapiki.startup_namer",
+            "certificate_hash": "73b385aa3184e69edd1b4232431a3f58f3fe26a7"
+          }
+        },
+        {
+          "client_id": "337051335431-6ighghf47hrt20h4ambdgjfl137ueqm9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZKOvhQHJXm1HIRGNp-XetEMtWNpeYfQ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "337051335431-6ighghf47hrt20h4ambdgjfl137ueqm9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
