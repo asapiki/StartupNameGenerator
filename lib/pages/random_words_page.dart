@@ -1,5 +1,8 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:startup_namer/models/user_model.dart';
+import 'package:startup_namer/pages/user_profile_page.dart';
 
 class RandomWordsPage extends StatefulWidget {
   @override
@@ -11,6 +14,15 @@ class _RandomWordsPageState extends State<RandomWordsPage> {
   final Set<WordPair> _saved = Set<WordPair>();
   ThemeData get theme => Theme.of(context);
 
+  final List<Map<String, dynamic>> userMenuItems = [
+    {
+      'title': 'logout',
+      'function': (BuildContext context) {
+        Provider.of<UserModel>(context, listen: false).logout();
+      },
+    }
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,9 +33,42 @@ class _RandomWordsPageState extends State<RandomWordsPage> {
             icon: Icon(Icons.list),
             onPressed: _pushSaved,
           ),
+          _buildUserMenuButton(),
         ],
       ),
       body: _buildSuggestions(),
+    );
+  }
+
+  Widget _buildUserMenuButton() {
+    return PopupMenuButton<Function>(
+      icon: Icon(Icons.account_circle),
+      onSelected: (Function f) {
+        f(context);
+      },
+      itemBuilder: (context) {
+        final userModel = Provider.of<UserModel>(context, listen: false);
+        return [
+              PopupMenuItem<Function>(
+                child: Text(userModel.user.displayName),
+                value: (_) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => UserProfilePage(userModel)),
+                  );
+                },
+              ),
+            ] +
+            userMenuItems
+                .map(
+                  (e) => PopupMenuItem<Function>(
+                    child: Text(e['title']),
+                    value: e['function'],
+                  ),
+                )
+                .toList();
+      },
     );
   }
 

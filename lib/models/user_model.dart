@@ -50,4 +50,9 @@ class UserModel extends ChangeNotifier {
       notifyListeners();
     }).catchError((e) => print(e));
   }
+
+  void logout() {
+    _user = null;
+    notifyListeners();
+  }
 }
