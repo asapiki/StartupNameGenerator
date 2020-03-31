@@ -39,11 +39,22 @@ class MyApp extends StatelessWidget {
         title: Text('Startup Name Generator'),
       ),
       body: Center(
-        child: RaisedButton(
-          child: Text('login'),
-          onPressed: () {
-            user.login();
-          },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            RaisedButton(
+              child: Text('google'),
+              onPressed: () {
+                user.signInWithGoogle();
+              },
+            ),
+            RaisedButton(
+              child: Text('github'),
+              onPressed: () {
+                user.signInWithGithub();
+              },
+            ),
+          ],
         ),
       ),
     );

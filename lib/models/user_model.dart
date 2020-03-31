@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth_oauth/firebase_auth_oauth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -11,14 +12,14 @@ class UserModel extends ChangeNotifier {
   FirebaseUser get user => _user;
   bool get isLoggedIn => _user != null;
 
-  void login() {
-    _handleSignIn().then((FirebaseUser user) {
+  void signInWithGoogle() {
+    _handleSignInWithGoogle().then((FirebaseUser user) {
       _user = user;
       notifyListeners();
     }).catchError((e) => print(e));
   }
 
-  Future<FirebaseUser> _handleSignIn() async {
+  Future<FirebaseUser> _handleSignInWithGoogle() async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
@@ -32,5 +33,21 @@ class UserModel extends ChangeNotifier {
         (await _auth.signInWithCredential(credential)).user;
     debugPrint("signed in " + user.displayName);
     return user;
+  }
+
+  void signInWithGithub() async {
+    FirebaseAuthOAuth().openSignInFlow(
+        "github.com", ["email"], {"locale": "en"}).then((FirebaseUser user) {
+      _user = user;
+      notifyListeners();
+    }).catchError((e) => print(e));
+  }
+
+  void signInWithApple() async {
+    FirebaseAuthOAuth().openSignInFlow(
+        "apple.com", ["email"], {"locale": "en"}).then((FirebaseUser user) {
+      _user = user;
+      notifyListeners();
+    }).catchError((e) => print(e));
   }
 }
