@@ -56,9 +56,4 @@ class UserModel extends ChangeNotifier {
     _user = null;
     notifyListeners();
   }
-
-  void logout() {
-    _user = null;
-    notifyListeners();
-  }
 }
