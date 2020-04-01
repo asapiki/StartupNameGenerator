@@ -49,7 +49,7 @@ class UserModel extends ChangeNotifier {
         .then((authResult) {
       _user = authResult.user;
       notifyListeners();
-    });
+    }).catchError((e) => print(e));
   }
 
   void logout() {
