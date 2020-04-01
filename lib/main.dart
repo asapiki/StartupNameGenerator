@@ -34,6 +34,9 @@ class MyApp extends StatelessWidget {
   }
 
   Scaffold buildLoginPage(UserModel user) {
+    var emailController = TextEditingController();
+    var passwordController = TextEditingController();
+    const _showPassword = true;
     return Scaffold(
       appBar: AppBar(
         title: Text('Startup Name Generator'),
@@ -41,7 +44,50 @@ class MyApp extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+          children: [
+            Container(
+              child: Column(
+                children: [
+                  Container(
+                    width: 200,
+                    child: TextFormField(
+                      controller: emailController,
+                      decoration: const InputDecoration(
+                        icon: Icon(Icons.email),
+                        hintText: 'xxx@yyy.com',
+                        labelText: 'email',
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 200,
+                    child: TextFormField(
+                      controller: passwordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        icon: Icon(Icons.https),
+                        hintText: 'abcd1234',
+                        labelText: 'password',
+//                          suffixIcon: IconButton(
+//                            icon: Icon(_showPassword
+//                                ? Icons.remove_red_eye
+//                                : Icons.panorama_fish_eye),
+//                          ),
+                      ),
+                    ),
+                  ),
+                  RaisedButton(
+                    child: Text('email/password'),
+                    onPressed: () {
+                      user.signInWithEmail(
+                        emailController.value.text,
+                        passwordController.value.text,
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
             RaisedButton(
               child: Text('google'),
               onPressed: () {

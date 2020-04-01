@@ -50,7 +50,11 @@ class _RandomWordsPageState extends State<RandomWordsPage> {
         final userModel = Provider.of<UserModel>(context, listen: false);
         return [
               PopupMenuItem<Function>(
+<<<<<<< ours
                 child: Text(userModel.user.displayName),
+=======
+                child: Text(userModel.user.displayName ?? '名無し'),
+>>>>>>> theirs
                 value: (_) {
                   Navigator.push(
                     context,

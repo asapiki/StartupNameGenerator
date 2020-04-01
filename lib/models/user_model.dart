@@ -43,12 +43,18 @@ class UserModel extends ChangeNotifier {
     }).catchError((e) => print(e));
   }
 
-  void signInWithApple() async {
-    FirebaseAuthOAuth().openSignInFlow(
-        "apple.com", ["email"], {"locale": "en"}).then((FirebaseUser user) {
-      _user = user;
+  void signInWithEmail(String email, String password) {
+    _auth
+        .signInWithEmailAndPassword(email: email, password: password)
+        .then((authResult) {
+      _user = authResult.user;
       notifyListeners();
-    }).catchError((e) => print(e));
+    });
+  }
+
+  void logout() {
+    _user = null;
+    notifyListeners();
   }
 
   void logout() {
