@@ -52,6 +52,13 @@ class UserModel extends ChangeNotifier {
     }).catchError((e) => print(e));
   }
 
+  void signInAsAnonymous() {
+    _auth.signInAnonymously().then((authResult) {
+      _user = authResult.user;
+      notifyListeners();
+    });
+  }
+
   void logout() {
     _user = null;
     notifyListeners();

@@ -28,9 +28,19 @@ class _LoginPageState extends State<LoginPage> {
             _biuldEmailAuth(),
             _buildGoogleAuth(),
             _buildGithubAuth(),
+            _buildAnonymousAuth(),
           ],
         ),
       ),
+    );
+  }
+
+  RaisedButton _buildAnonymousAuth() {
+    return RaisedButton(
+      child: Text('anonymous'),
+      onPressed: () {
+        widget.userModel.signInAsAnonymous();
+      },
     );
   }
 
