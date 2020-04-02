@@ -2,9 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:startup_namer/models/user_model.dart';
 import 'package:startup_namer/pages/login_page.dart';
 import 'package:startup_namer/pages/random_words_page.dart';
 
@@ -23,15 +22,11 @@ class MyApp extends StatelessWidget {
           headline1: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
         ),
       ),
-      home: ListenableProvider<UserModel>(
-        create: (_) => UserModel(),
-        child: Consumer<UserModel>(
-          builder: (context, userModel, child) {
-            return userModel.isLoggedIn
-                ? RandomWordsPage()
-                : LoginPage(userModel: userModel);
-          },
-        ),
+      home: StreamBuilder<FirebaseUser>(
+        stream: FirebaseAuth.instance.onAuthStateChanged,
+        builder: (context, snapshot) {
+          return snapshot.hasData ? RandomWordsPage() : LoginPage();
+        },
       ),
     );
   }

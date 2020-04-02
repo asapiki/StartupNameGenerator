@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:startup_namer/services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
-  final userModel;
-
-  const LoginPage({Key key, this.userModel}) : super(key: key);
-
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -25,7 +22,7 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _biuldEmailAuth(),
+            _buildEmailAuth(),
             _buildGoogleAuth(),
             _buildGithubAuth(),
             _buildAnonymousAuth(),
@@ -39,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
     return RaisedButton(
       child: Text('anonymous'),
       onPressed: () {
-        widget.userModel.signInAsAnonymous();
+        AuthService.signInAsAnonymous();
       },
     );
   }
@@ -48,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
     return RaisedButton(
       child: Text('github'),
       onPressed: () {
-        widget.userModel.signInWithGithub();
+        AuthService.signInWithGithub();
       },
     );
   }
@@ -57,12 +54,12 @@ class _LoginPageState extends State<LoginPage> {
     return RaisedButton(
       child: Text('google'),
       onPressed: () {
-        widget.userModel.signInWithGoogle();
+        AuthService.signInWithGoogle();
       },
     );
   }
 
-  Column _biuldEmailAuth() {
+  Column _buildEmailAuth() {
     return Column(
       children: [
         Container(
@@ -101,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
         RaisedButton(
           child: Text('email/password'),
           onPressed: () {
-            widget.userModel.signInWithEmail(
+            AuthService.signInWithEmail(
               emailController.value.text,
               passwordController.value.text,
             );

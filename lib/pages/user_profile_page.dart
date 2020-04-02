@@ -1,12 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:startup_namer/models/user_model.dart';
 
 class UserProfilePage extends StatelessWidget {
-  const UserProfilePage(this.user, {Key key}) : super(key: key);
-
-  final UserModel user;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,14 +24,24 @@ class UserProfilePage extends StatelessWidget {
     );
   }
 
-  Column buildBasicInfos() {
-    return Column(
-      children: [
-        buildInfo('uid', user.user.providerData[0].uid),
-        buildInfo('email', user.user.email),
-        buildInfo('表示名', user.user.displayName),
-        buildInfo('isAnonymous', user.user.isAnonymous.toString()),
-      ],
+  Widget buildBasicInfos() {
+    return StreamBuilder<FirebaseUser>(
+      stream: FirebaseAuth.instance.currentUser().asStream(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return CircularProgressIndicator();
+        }
+
+        final user = snapshot.data;
+        return Column(
+          children: [
+            buildInfo('uid', user.providerData[0].uid),
+            buildInfo('email', user.email),
+            buildInfo('表示名', user.displayName),
+            buildInfo('isAnonymous', user.isAnonymous.toString()),
+          ],
+        );
+      },
     );
   }
 

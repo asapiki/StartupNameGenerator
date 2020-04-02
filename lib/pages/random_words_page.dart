@@ -1,8 +1,7 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:startup_namer/models/user_model.dart';
 import 'package:startup_namer/pages/user_profile_page.dart';
+import 'package:startup_namer/services/auth_service.dart';
 
 class RandomWordsPage extends StatefulWidget {
   @override
@@ -18,7 +17,7 @@ class _RandomWordsPageState extends State<RandomWordsPage> {
     {
       'title': 'logout',
       'function': (BuildContext context) {
-        Provider.of<UserModel>(context, listen: false).logout();
+        AuthService.signOut();
       },
     }
   ];
@@ -41,33 +40,41 @@ class _RandomWordsPageState extends State<RandomWordsPage> {
   }
 
   Widget _buildUserMenuButton() {
-    return PopupMenuButton<Function>(
-      icon: Icon(Icons.account_circle),
-      onSelected: (Function f) {
-        f(context);
-      },
-      itemBuilder: (context) {
-        final userModel = Provider.of<UserModel>(context, listen: false);
-        return [
-              PopupMenuItem<Function>(
-                child: Text(userModel.user.displayName ?? '名無し'),
-                value: (_) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => UserProfilePage(userModel)),
-                  );
-                },
-              ),
-            ] +
-            userMenuItems
-                .map(
-                  (e) => PopupMenuItem<Function>(
-                    child: Text(e['title']),
-                    value: e['function'],
+    return FutureBuilder(
+      future: AuthService.getCurrentUser(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return SizedBox();
+        }
+        final user = snapshot.data;
+        return PopupMenuButton<Function>(
+          icon: Icon(Icons.account_circle),
+          onSelected: (Function f) {
+            f(context);
+          },
+          itemBuilder: (context) {
+            return [
+                  PopupMenuItem<Function>(
+                    child: Text(user.displayName ?? '名無し'),
+                    value: (_) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => UserProfilePage()),
+                      );
+                    },
                   ),
-                )
-                .toList();
+                ] +
+                userMenuItems
+                    .map(
+                      (e) => PopupMenuItem<Function>(
+                        child: Text(e['title']),
+                        value: e['function'],
+                      ),
+                    )
+                    .toList();
+          },
+        );
       },
     );
   }
