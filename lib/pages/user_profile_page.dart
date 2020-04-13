@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:startup_namer/services/auth_service.dart';
 
 class UserProfilePage extends StatelessWidget {
   @override
@@ -12,36 +13,50 @@ class UserProfilePage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('基本情報', style: Theme.of(context).textTheme.headline6),
-              buildBasicInfos(),
-            ],
+          StreamBuilder<FirebaseUser>(
+            stream: FirebaseAuth.instance.currentUser().asStream(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return CircularProgressIndicator();
+              }
+
+              final user = snapshot.data;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('基本情報', style: Theme.of(context).textTheme.headline6),
+                  buildBasicInfos(user),
+                  RaisedButton(
+                    child: Text('googleアカウントに紐付け'),
+                    onPressed: () {
+                      // 匿名ユーザをgoogle認証に紐付けする処理
+                      AuthService.linkWithGoogle();
+                    },
+                  ),
+                  RaisedButton(
+                    child: Text('githubアカウントに紐付け'),
+                    onPressed: () {
+                      // 匿名ユーザをgoogle認証に紐付けする処理
+                      AuthService.linkWithGithub();
+                    },
+                  )
+                ],
+              );
+            },
           ),
         ],
       ),
     );
   }
 
-  Widget buildBasicInfos() {
-    return StreamBuilder<FirebaseUser>(
-      stream: FirebaseAuth.instance.currentUser().asStream(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return CircularProgressIndicator();
-        }
-
-        final user = snapshot.data;
-        return Column(
-          children: [
-            buildInfo('uid', user.providerData[0].uid),
-            buildInfo('email', user.email),
-            buildInfo('表示名', user.displayName),
-            buildInfo('isAnonymous', user.isAnonymous.toString()),
-          ],
-        );
-      },
+  Widget buildBasicInfos(FirebaseUser user) {
+    return Column(
+      children: [
+        buildInfo('uid', user.providerData[0].uid),
+        buildInfo('email', user.email),
+        buildInfo('表示名', user.displayName),
+        buildInfo('isAnonymous', user.isAnonymous.toString()),
+      ],
     );
   }
 

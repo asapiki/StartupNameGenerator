@@ -23,23 +23,46 @@ class AuthService {
   }
 
   static void signInWithGoogle() async {
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+    AuthCredential credential = await fetchGoogleUserCredential();
 
     final FirebaseUser user =
         (await _auth.signInWithCredential(credential)).user;
     debugPrint("signed in " + user.displayName);
   }
 
+  static void linkWithGoogle() async {
+    final AuthCredential credential = await fetchGoogleUserCredential();
+    final FirebaseUser user = await _auth.currentUser();
+    user.linkWithCredential(credential);
+  }
+
+  static Future<AuthCredential> fetchGoogleUserCredential() async {
+    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+
+    return GoogleAuthProvider.getCredential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+  }
+
   static void signInWithGithub() {
     _authOauth.openSignInFlow(
         "github.com", ["email"], {"locale": "en"}).catchError((e) => print(e));
+  }
+
+  static void linkWithGithub() async {
+    _auth.currentUser().then((currentUser) {
+      _authOauth.openSignInFlow("github.com", ["email"], {"locale": "en"}).then(
+        (value) async {
+          final token = (await value.getIdToken()).token;
+
+          final credential = GithubAuthProvider.getCredential(token: token);
+          currentUser.linkWithCredential(credential);
+        },
+      ).catchError((e) => print(e));
+    });
   }
 
   static Future<FirebaseUser> getCurrentUser() async {
